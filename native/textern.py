@@ -100,7 +100,10 @@ class TmpManager():
 def main():
     with INotify() as ino, TmpManager() as tmp_mgr:
         ino.add_watch(tmp_mgr.tmpdir, flags.CLOSE_WRITE)
-        loop = asyncio.get_event_loop()
+        try:
+            loop = asyncio.get_event_loop()
+        except:
+            loop = asyncio.new_event_loop()
         loop.add_reader(sys.stdin.buffer, handle_stdin, tmp_mgr)
         loop.add_reader(ino.fd, handle_inotify_event, ino, tmp_mgr)
         loop.run_forever()
